@@ -4,6 +4,10 @@ import com.terranullius.task.business.domain.model.Image
 import com.terranullius.task.business.domain.util.EntityMapper
 import com.terranullius.task.framework.datasource.network.model.ImageDto
 
+/**
+ * Class to map ImageDto to Image domain model and vice-versa
+ * */
+
 class NetworkMapper: EntityMapper<ImageDto, Image> {
 
     override fun mapFromEntity(entity: ImageDto): Image {
