@@ -1,4 +1,4 @@
-package com.terranullius.task.ui.theme
+package com.terranullius.task.framework.presentation.composables.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

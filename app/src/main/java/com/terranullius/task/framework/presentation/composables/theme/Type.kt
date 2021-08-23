@@ -1,4 +1,4 @@
-package com.terranullius.task.ui.theme
+package com.terranullius.task.framework.presentation.composables.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
