@@ -9,13 +9,14 @@ import com.terranullius.task.business.domain.state.StateResource
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 /**
  * Use case for getting all images from API
  * */
 
 
-class GetAllImages(private val imageNetworkDataSource: ImageNetworkDataSource) {
+class GetAllImages @Inject constructor(private val imageNetworkDataSource: ImageNetworkDataSource) {
 
     fun getAllImages(): Flow<StateResource<List<Image>>> = flow {
 
