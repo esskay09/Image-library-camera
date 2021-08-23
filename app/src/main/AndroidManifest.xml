@@ -3,14 +3,15 @@
     package="com.terranullius.task">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:name=".framework.presentation.BaseApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SachikoGamingTask">
         <activity
-            android:name="com.terranullius.task.MainActivity"
+            android:name=".framework.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SachikoGamingTask.NoActionBar">
