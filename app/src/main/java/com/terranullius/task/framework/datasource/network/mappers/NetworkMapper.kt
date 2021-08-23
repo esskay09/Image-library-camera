@@ -32,3 +32,23 @@ class NetworkMapper: EntityMapper<ImageDto, Image> {
             )
     }
 }
+
+fun List<ImageDto>.toImageList() = this.map {
+    Image(
+        id = it.id,
+        description = it.description,
+        imageUrl = it.imageUrl,
+        publishedDate = it.publishedDate,
+        title = it.title
+    )
+}
+
+fun List<Image>.toImageDtoList() = this.map {
+    ImageDto(
+        id = it.id,
+        description = it.description,
+        imageUrl = it.imageUrl,
+        publishedDate = it.publishedDate,
+        title = it.title
+    )
+}

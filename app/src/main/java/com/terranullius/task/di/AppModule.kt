@@ -2,7 +2,10 @@ package com.terranullius.task.di
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.terranullius.task.framework.datasource.network.abstraction.ImageNetworkService
 import com.terranullius.task.framework.datasource.network.implementation.ApiService
+import com.terranullius.task.framework.datasource.network.implementation.ImageNetworkServiceImpl
+import com.terranullius.task.framework.datasource.network.mappers.NetworkMapper
 import com.terranullius.task.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -36,6 +39,24 @@ object AppModule{
             .baseUrl(BASE_URL)
             .build()
             .create(ApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesNetworkMapper(): NetworkMapper {
+        return NetworkMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun providesImageNetworkService(
+        apiService: ApiService,
+        networkMapper: NetworkMapper
+    ): ImageNetworkService{
+        return ImageNetworkServiceImpl(
+            networkMapper,
+            apiService
+        )
     }
 
 }
