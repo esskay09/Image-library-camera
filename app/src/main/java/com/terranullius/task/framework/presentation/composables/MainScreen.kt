@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
@@ -70,7 +71,15 @@ fun MainScreen(
                     }
                 }
             )
-        }
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                viewModel.onCaptureClick()
+            }) {
+                Icon(imageVector = Icons.Default.Camera, contentDescription = "", tint = getTextColor())
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
         val imageStateFlow = viewModel.imageStateFlow.collectAsState()
         MainScreenContent(

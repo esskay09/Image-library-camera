@@ -1,5 +1,6 @@
 package com.terranullius.task.framework.presentation
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -35,11 +36,23 @@ class MainViewModel @Inject constructor(
     val onShare: StateFlow<Event<String?>>
         get() = _onShare
 
+    private val _onCapture = MutableStateFlow<Event<Unit?>>(Event(null))
+    val onCapture: StateFlow<Event<Unit?>>
+        get() = _onCapture
+
     fun setSelectedImage(image: Image) {
         _selectedImage.value = image
     }
 
     fun onShare(imageUrl: String) {
         _onShare.value = Event(imageUrl)
+    }
+
+    fun onCaptureClick() {
+        _onCapture.value = Event(Unit)
+    }
+
+    fun addCapturedImage(bitmap: Bitmap) {
+
     }
 }
