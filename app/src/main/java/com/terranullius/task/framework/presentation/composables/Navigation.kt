@@ -21,7 +21,7 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: MainViewModel) {
         }
 
         composable(Screen.ImageDetail.route){
-            ImageDetailScreen()
+            ImageDetailScreen(viewModel = viewModel)
         }
 
     }

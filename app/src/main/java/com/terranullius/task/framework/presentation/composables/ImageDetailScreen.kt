@@ -27,7 +27,10 @@ fun ImageDetailScreen(
                 ErrorComposable()
             }
             else -> {
-
+                ImageDetailContent(
+                    modifier = Modifier.fillMaxSize(),
+                    image = selectedImage.value!!
+                )
             }
         }
     }
