@@ -9,6 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.lifecycle.lifecycleScope
 import com.terranullius.task.business.interactors.imagelist.ImageListInteractors
+import com.terranullius.task.framework.presentation.composables.theme.MyApp
 import com.terranullius.task.framework.presentation.composables.theme.TaskTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -23,12 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            TaskTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-
-                }
-            }
+            MyApp()
         }
     }
 }
