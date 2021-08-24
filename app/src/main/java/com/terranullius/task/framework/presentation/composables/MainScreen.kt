@@ -8,8 +8,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
@@ -31,7 +34,10 @@ fun MainScreen(
     viewModel: MainViewModel
 ) {
 
-    var listType by remember {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val imageHeight = screenHeight.div(3.3).dp
+
+    var listType by rememberSaveable {
         mutableStateOf(ListType.LINEAR)
     }
 
@@ -47,8 +53,9 @@ fun MainScreen(
                             if (listType == ListType.LINEAR) ListType.GRID else ListType.LINEAR
                     }) {
                         Icon(
-                            imageVector = if (listType == ListType.LINEAR) Icons.Default.List else Icons.Default.GridView,
-                            contentDescription = "list"
+                            imageVector = if (listType == ListType.GRID) Icons.Default.List else Icons.Default.GridView,
+                            contentDescription = "list",
+                            tint = textColor
                         )
                     }
                 }
@@ -59,7 +66,8 @@ fun MainScreen(
         MainScreenContent(
             modifier = modifier.padding(paddingValues),
             imageStateFlow,
-            listType
+            listType,
+            imageHeight
         ) {
             setImageSelected(it, viewModel)
             navigateImageDetail(navController)
@@ -80,6 +88,7 @@ fun MainScreenContent(
     modifier: Modifier = Modifier,
     imageStateFlow: State<StateResource<List<Image>>>,
     listType: ListType,
+    imageHeight: Dp,
     onCardClick: (Image) -> Unit
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -97,7 +106,8 @@ fun MainScreenContent(
                 ImageList(
                     modifier = Modifier.fillMaxSize(),
                     images = imageList,
-                    listType = listType
+                    listType = listType,
+                    imageHeight = imageHeight
                 ) {
                     onCardClick(it)
                 }
@@ -112,23 +122,17 @@ fun ImageList(
     modifier: Modifier = Modifier,
     images: List<Image>,
     listType: ListType,
+    imageHeight: Dp,
     onCardClick: (Image) -> Unit,
 ) {
-
     LazyColumn(modifier = modifier) {
-
-        //TODO
-        /*val screenHeight = LocalConfiguration.current.screenHeightDp
-        val imageHeight = with(LocalDensity.current) {
-            screenHeight.div(3).toDp()
-        }*/
 
         when (listType) {
             ListType.LINEAR -> itemsIndexed(images) { _: Int, item: Image ->
-                Column() {
+                Column(Modifier.padding(vertical = spaceBetweenImages)) {
                     ImageCard(
                         image = item,
-                        modifier = Modifier.height(200.dp),
+                        modifier = Modifier.height(imageHeight.div(0.9f)),
                         onClick = {
                             onCardClick(it)
                         }
@@ -149,15 +153,15 @@ fun ImageList(
 
                 val chunkedList = images.chunked(2)
 
-                itemsIndexed(chunkedList) { index: Int, chunkedItem: List<Image> ->
+                itemsIndexed(chunkedList) { _: Int, chunkedItem: List<Image> ->
 
                     Row(Modifier.fillMaxWidth()) {
                         chunkedItem.forEach {
 
-                            Column(Modifier.weight(1f)) {
+                            Column(Modifier.weight(1f).padding(spaceBetweenImages)) {
                                 ImageCard(
                                     image = it,
-                                    modifier = Modifier.height(200.dp),
+                                    modifier = Modifier.height(imageHeight),
                                     onClick = {
                                         onCardClick(it)
                                     }

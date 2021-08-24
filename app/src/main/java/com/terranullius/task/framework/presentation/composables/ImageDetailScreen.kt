@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CalendarViewDay
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.terranullius.task.business.domain.model.Image
 import com.terranullius.task.framework.presentation.MainViewModel
@@ -47,11 +49,18 @@ fun ImageDetailScreen(
                             Icon(imageVector = Icons.Default.Share, contentDescription = "share")
                         }
                     }, floatingActionButtonPosition = FabPosition.End
-                ) {
+                ) { paddingValues ->
                     ImageDetailContent(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(it),
+                            .padding(
+                                top = paddingValues
+                                    .calculateTopPadding()
+                                    .plus(8.dp),
+                                bottom = paddingValues.calculateBottomPadding(),
+                                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr)
+                            ),
                         image = selectedImage.value!!
                     )
                 }
@@ -65,8 +74,8 @@ fun ImageDetailContent(
     modifier: Modifier = Modifier,
     image: Image,
 ) {
-    when(LocalConfiguration.current.orientation){
-        ORIENTATION_LANDSCAPE -> ImageDetailContentLandScape(modifier = modifier,image = image)
+    when (LocalConfiguration.current.orientation) {
+        ORIENTATION_LANDSCAPE -> ImageDetailContentLandScape(modifier = modifier, image = image)
         ORIENTATION_PORTRAIT -> ImageDetailContentPotrait(modifier = modifier, image = image)
         else -> ImageDetailContentPotrait(modifier = modifier, image = image)
     }
@@ -136,10 +145,11 @@ fun ImageDetailContentLandScape(
         }
 
         ImageDetailDescription(
-            modifier =  Modifier
-            .fillMaxHeight()
-            .weight(1f)
-            .padding(horizontal = 8.dp), image = image)
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
+                .padding(horizontal = 8.dp), image = image
+        )
     }
 
 }
