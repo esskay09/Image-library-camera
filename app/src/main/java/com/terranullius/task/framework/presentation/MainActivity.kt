@@ -37,8 +37,12 @@ class MainActivity : ComponentActivity() {
     private fun shareImage(url: String) {
 
         try {
-            Intent(Intent.ACTION_SEND).apply {
-                data = Uri.parse(url)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "Sharing photo")
+                putExtra(Intent.EXTRA_TEXT, url)
+            }
+            with(Intent.createChooser(intent, "Share photo")){
                 startActivity(this)
             }
         } catch (e: Exception) {
