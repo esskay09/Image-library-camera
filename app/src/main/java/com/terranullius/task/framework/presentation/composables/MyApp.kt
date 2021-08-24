@@ -12,7 +12,7 @@ import com.terranullius.task.framework.presentation.composables.theme.mainPaddin
 
 @Composable
 fun MyApp(
-    modifier: Modifier = Modifier.fillMaxSize().padding(mainPadding),
+    modifier: Modifier = Modifier.fillMaxSize().padding(horizontal = mainPadding),
     viewModel: MainViewModel
 ) {
 
@@ -20,7 +20,7 @@ fun MyApp(
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
 
-            Navigation(viewModel = viewModel)
+            Navigation(viewModel = viewModel, modifier = modifier)
         }
     }
 }

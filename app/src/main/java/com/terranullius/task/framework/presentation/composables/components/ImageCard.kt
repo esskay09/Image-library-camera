@@ -44,7 +44,6 @@ fun ImageCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
-
             val painter = rememberImagePainter(data = image.imageUrl, builder = {
                 this.memoryCacheKey(image.title)
                 crossfade(true)

@@ -25,6 +25,7 @@ import com.terranullius.task.framework.presentation.composables.components.Error
 import com.terranullius.task.framework.presentation.composables.components.ImageCard
 import com.terranullius.task.framework.presentation.composables.components.LoadingComposable
 import com.terranullius.task.framework.presentation.composables.theme.spaceBetweenImages
+import com.terranullius.task.framework.presentation.composables.theme.textColor
 import com.terranullius.task.framework.presentation.util.Screen
 
 @Composable
@@ -40,12 +41,10 @@ fun MainScreen(
                 Text(text = "Images")
             }
         }
-    ) {
+    ) { paddingValues->
         val imageStateFlow = viewModel.imageStateFlow.collectAsState()
         MainScreenContent(
-            Modifier
-                .fillMaxSize()
-                .padding(it),
+            modifier = modifier.padding(paddingValues),
             imageStateFlow
         ) {
             setImageSelected(it, viewModel)
@@ -98,11 +97,6 @@ fun ImageList(
     onCardClick: (Image) -> Unit
 ) {
 
-    LaunchedEffect(key1 = Unit){
-        images.forEach {
-            Log.d("testImage", it.imageUrl)
-        }
-    }
 
     LazyColumn(modifier = modifier) {
         itemsIndexed(images) { index: Int, item: Image ->
@@ -123,10 +117,10 @@ fun ImageList(
                 ){ image->
                     Text(
                         text = image.title,
-                        color = Color.Gray,
+                        color = textColor,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
-                            .offset(x = 4.dp, y = 4.dp)
+                            .offset(x = 4.dp, y = (-4).dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(spaceBetweenImages))

@@ -14,14 +14,17 @@ fun Navigation(modifier: Modifier = Modifier, viewModel: MainViewModel) {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.Main.route){
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Main.route,
+    ){
 
         composable(Screen.Main.route){
-            MainScreen(navController = navController, viewModel = viewModel)
+            MainScreen(navController = navController, viewModel = viewModel, modifier = modifier)
         }
 
         composable(Screen.ImageDetail.route){
-            ImageDetailScreen(viewModel = viewModel)
+            ImageDetailScreen(viewModel = viewModel, modifier = modifier)
         }
 
     }
