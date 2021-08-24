@@ -3,11 +3,10 @@ package com.terranullius.task.framework.presentation.composables
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.CalendarViewDay
-import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.terranullius.task.business.domain.model.Image
@@ -62,7 +62,8 @@ fun ImageDetailScreen(
                                 start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
                                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr)
                             ),
-                        image = selectedImage.value!!
+                        image = selectedImage.value!!,
+                        imageHeight = imageHeight
                     )
                 }
             }
@@ -74,38 +75,57 @@ fun ImageDetailScreen(
 fun ImageDetailContent(
     modifier: Modifier = Modifier,
     image: Image,
+    imageHeight: Dp,
 ) {
     when (LocalConfiguration.current.orientation) {
-        ORIENTATION_LANDSCAPE -> ImageDetailContentLandScape(modifier = modifier, image = image)
-        ORIENTATION_PORTRAIT -> ImageDetailContentPotrait(modifier = modifier, image = image)
-        else -> ImageDetailContentPotrait(modifier = modifier, image = image)
+        ORIENTATION_LANDSCAPE -> ImageDetailContentLandScape(modifier = modifier, image = image, imageHeight = imageHeight)
+        ORIENTATION_PORTRAIT -> ImageDetailContentPotrait(modifier = modifier, image = image, imageHeight = imageHeight)
+        else -> ImageDetailContentPotrait(
+            modifier = modifier,
+            image = image,
+            imageHeight = imageHeight
+        )
     }
 }
 
 @Composable
 private fun ImageDetailDescription(image: Image, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row {
-            Text(
-                text = image.title,
-                style = MaterialTheme.typography.h5.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = getHeadlineTextColor()
-                )
-            )
+    LazyColumn(modifier = modifier) {
+        item{
+            Spacer(modifier = Modifier.height(12.dp))
         }
-        Spacer(modifier = Modifier.height(18.dp))
 
-        Text(text = image.description, color = getTextColor())
+        item{
+            Row {
+                Text(
+                    text = image.title,
+                    style = MaterialTheme.typography.h5.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = getHeadlineTextColor()
+                    )
+                )
+            }
+        }
+        item{
+            Spacer(modifier = Modifier.height(18.dp))
+        }
 
-        Spacer(modifier = Modifier.height(36.dp))
+        item{
+            Text(text = image.description, color = getTextColor())
+        }
 
-        Row(Modifier.align(Alignment.End)) {
-            Icon(Icons.Default.CalendarToday, contentDescription = "", tint = getTextColor())
-            Spacer(modifier = Modifier.width(3.dp))
-            Text(text = image.publishedDate.substringBefore("T"), color = getTextColor())
+        item{
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        item{
+            Box(Modifier.fillMaxWidth()){
+                Row(Modifier.align(Alignment.TopEnd)) {
+                    Icon(Icons.Default.CalendarToday, contentDescription = "", tint = getTextColor())
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(text = image.publishedDate.substringBefore("T"), color = getTextColor())
+                }
+            }
         }
     }
 }
@@ -114,7 +134,8 @@ private fun ImageDetailDescription(image: Image, modifier: Modifier = Modifier) 
 @Composable
 private fun ImageDetailContentPotrait(
     modifier: Modifier,
-    image: Image
+    image: Image,
+    imageHeight: Dp
 ) {
     Column(modifier = modifier) {
         ImageCard(
@@ -122,7 +143,7 @@ private fun ImageDetailContentPotrait(
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .height(imageDetailHeight)
+                .height(imageHeight)
         ) {
         }
 
@@ -133,7 +154,8 @@ private fun ImageDetailContentPotrait(
 @Composable
 fun ImageDetailContentLandScape(
     modifier: Modifier = Modifier,
-    image: Image
+    image: Image,
+    imageHeight: Dp
 ) {
     Row(modifier = modifier) {
         ImageCard(
