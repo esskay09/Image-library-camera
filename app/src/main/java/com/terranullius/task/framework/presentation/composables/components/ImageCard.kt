@@ -17,16 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.skydoves.landscapist.CircularReveal
+import com.skydoves.landscapist.ImageLoadState
 import com.skydoves.landscapist.glide.GlideImage
+import com.terranullius.task.R
 import com.terranullius.task.business.domain.model.Image
 
+@ExperimentalCoilApi
 @Composable
 fun ImageCard(
     modifier: Modifier = Modifier,
@@ -56,19 +62,35 @@ fun ImageCard(
                 contentDescription = "image"
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black
-                            ),
-                            startY = 300f
-                        )
+            when (painter.state) {
+                is ImagePainter.State.Loading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is ImagePainter.State.Success -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.Black
+                                    ),
+                                    startY = 300f
+                                )
+                            )
                     )
-            )
+                }
+                is ImagePainter.State.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Image(painterResource(id = R.drawable.ic_image_error), "image error")
+                    }
+                }
+            }
+
+
             bottomContent(image)
         }
 
