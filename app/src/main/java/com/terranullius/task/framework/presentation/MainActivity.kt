@@ -1,19 +1,11 @@
 package com.terranullius.task.framework.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.lifecycle.lifecycleScope
-import com.terranullius.task.business.interactors.imagelist.ImageListInteractors
-import com.terranullius.task.framework.presentation.composables.theme.MyApp
-import com.terranullius.task.framework.presentation.composables.theme.TaskTheme
+import com.terranullius.task.framework.presentation.composables.MyApp
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MyApp()
+            MyApp(viewModel = viewModel)
         }
     }
 }
