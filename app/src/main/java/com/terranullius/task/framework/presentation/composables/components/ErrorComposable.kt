@@ -2,6 +2,7 @@ package com.terranullius.task.framework.presentation.composables.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -15,7 +16,7 @@ import com.terranullius.task.R
 
 @Composable
 fun ErrorComposable(modifier: Modifier = Modifier, msg: String = "Something went wrong") {
-    Column(modifier = modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AndroidView(
             factory = {
                 LottieAnimationView(it).apply {
@@ -27,8 +28,8 @@ fun ErrorComposable(modifier: Modifier = Modifier, msg: String = "Something went
         ) {
             it.playAnimation()
         }
-        Divider(Modifier.height(15.dp))
-        Text(text = msg, Modifier.align(Alignment.CenterHorizontally))
+        Spacer(Modifier.height(15.dp))
+        Text(text = msg)
     }
 
 }

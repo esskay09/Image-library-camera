@@ -1,6 +1,7 @@
 package com.terranullius.task.framework.presentation.composables
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -12,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -24,8 +27,8 @@ import com.terranullius.task.framework.presentation.MainViewModel
 import com.terranullius.task.framework.presentation.composables.components.ErrorComposable
 import com.terranullius.task.framework.presentation.composables.components.ImageCard
 import com.terranullius.task.framework.presentation.composables.components.LoadingComposable
+import com.terranullius.task.framework.presentation.composables.theme.getTextColor
 import com.terranullius.task.framework.presentation.composables.theme.spaceBetweenImages
-import com.terranullius.task.framework.presentation.composables.theme.textColor
 import com.terranullius.task.framework.presentation.composables.util.ListType
 import com.terranullius.task.framework.presentation.util.Screen
 import kotlinx.coroutines.delay
@@ -58,7 +61,7 @@ fun MainScreen(
                         Icon(
                             imageVector = if (listType == ListType.GRID) Icons.Default.List else Icons.Default.GridView,
                             contentDescription = "list",
-                            tint = textColor
+                            tint = getTextColor()
                         )
                     }
                 }
@@ -133,25 +136,7 @@ fun ImageList(
         when (listType) {
             ListType.LINEAR -> itemsIndexed(images) { index: Int, item: Image ->
 
-                var translationXState by remember{
-                    mutableStateOf(if (index%2==0) -600f else 600f)
-                }
-
-                val translationXAnimState = animateFloatAsState(targetValue = translationXState)
-
-                LaunchedEffect(Unit){
-                    if (translationXState < 0f){
-                        while (translationXState<0f){
-                            translationXState = translationXState.plus(50f)
-                            delay(50L)
-                        }
-                    } else{
-                        while (translationXState > 0f){
-                            translationXState = translationXState.minus(50f)
-                            delay(50L)
-                        }
-                    }
-                }
+                val translationXAnimState = getTranslationXAnim(index)
 
                 ImageItem(
                     modifier = Modifier
@@ -175,32 +160,14 @@ fun ImageList(
                     Row(Modifier.fillMaxWidth()) {
                         chunkedItem.forEachIndexed{ index : Int, image: Image ->
 
-                            var translationXState by remember{
-                                mutableStateOf(if (index%2==0) -600f else 600f)
-                            }
-
-                            val translationXAnimState = animateFloatAsState(targetValue = translationXState)
-
-                            LaunchedEffect(Unit){
-                                if (translationXState < 0f){
-                                    while (translationXState<0f){
-                                        translationXState = translationXState.plus(50f)
-                                        delay(50L)
-                                    }
-                                } else{
-                                    while (translationXState > 0f){
-                                        translationXState = translationXState.minus(50f)
-                                        delay(50L)
-                                    }
-                                }
-                            }
+                            val translationXAnimState = getTranslationXAnim(index)
 
                             ImageItem(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(spaceBetweenImages)
                                     .graphicsLayer {
-                                         translationX = translationXAnimState.value
+                                        translationX = translationXAnimState.value
                                     },
                                 image = image,
                                 imageHeight = imageHeight
@@ -210,12 +177,34 @@ fun ImageList(
                         }
                     }
                 }
-
             }
         }
-
-
     }
+}
+
+@Composable
+fun getTranslationXAnim(index: Int): State<Float> {
+    var translationXState by remember{
+        mutableStateOf(if (index%2==0) -1000f else 1000f)
+    }
+
+    val translationXAnimState = animateFloatAsState(targetValue = translationXState)
+
+    LaunchedEffect(Unit){
+        if (translationXState < 0f){
+            while (translationXState<0f){
+                translationXState = translationXState.plus(100f)
+                delay(35L)
+            }
+        } else{
+            while (translationXState > 0f){
+                translationXState = translationXState.minus(100f)
+                delay(35L)
+            }
+        }
+    }
+
+    return translationXAnimState
 }
 
 @Composable
@@ -236,11 +225,14 @@ private fun ImageItem(
             }
         ) { image ->
             Text(
-                text = image.title,
-                color = textColor,
+                text = image.title.take(15),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = MaterialTheme.typography.h6,
+                color = Color.Gray,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .offset(x = 4.dp, y = (-4).dp)
+                    .offset(x = 8.dp, y = (-8).dp)
             )
         }
         Spacer(modifier = Modifier.height(spaceBetweenImages))

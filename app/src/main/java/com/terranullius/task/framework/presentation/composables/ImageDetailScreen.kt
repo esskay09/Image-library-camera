@@ -21,15 +21,16 @@ import com.terranullius.task.business.domain.model.Image
 import com.terranullius.task.framework.presentation.MainViewModel
 import com.terranullius.task.framework.presentation.composables.components.ErrorComposable
 import com.terranullius.task.framework.presentation.composables.components.ImageCard
-import com.terranullius.task.framework.presentation.composables.theme.imageDetailHeight
-import com.terranullius.task.framework.presentation.composables.theme.textColor
-import com.terranullius.task.framework.presentation.composables.theme.textHeadlineColor
+import com.terranullius.task.framework.presentation.composables.theme.*
 
 @Composable
 fun ImageDetailScreen(
     modifier: Modifier = Modifier.fillMaxSize(),
     viewModel: MainViewModel,
 ) {
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val imageHeight = screenHeight.div(2.4).dp
 
     val selectedImage = remember {
         viewModel.selectedImage
@@ -91,20 +92,20 @@ private fun ImageDetailDescription(image: Image, modifier: Modifier = Modifier) 
                 text = image.title,
                 style = MaterialTheme.typography.h5.copy(
                     fontWeight = FontWeight.Bold,
-                    color = textHeadlineColor
+                    color = getHeadlineTextColor()
                 )
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
 
-        Text(text = image.description, color = textColor)
+        Text(text = image.description, color = getTextColor())
 
         Spacer(modifier = Modifier.height(36.dp))
 
         Row(Modifier.align(Alignment.End)) {
-            Icon(Icons.Default.CalendarToday, contentDescription = "", tint = textColor)
+            Icon(Icons.Default.CalendarToday, contentDescription = "", tint = getTextColor())
             Spacer(modifier = Modifier.width(3.dp))
-            Text(text = image.publishedDate.substringBefore("T"), color = textColor)
+            Text(text = image.publishedDate.substringBefore("T"), color = getTextColor())
         }
     }
 }
