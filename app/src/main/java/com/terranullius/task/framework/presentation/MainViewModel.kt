@@ -1,5 +1,7 @@
 package com.terranullius.task.framework.presentation
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.terranullius.task.business.domain.model.Image
@@ -15,7 +17,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val imageListInteractors: ImageListInteractors
-): ViewModel() {
+) : ViewModel() {
+
+    val _selectedImage = mutableStateOf<Image?>(null)
+    val selectedImage: State<Image?>
+        get() = _selectedImage
 
     val imageStateFlow: StateFlow<StateResource<List<Image>>> =
         imageListInteractors.getAllImages.getAllImages().stateIn(
@@ -24,4 +30,7 @@ class MainViewModel @Inject constructor(
             initialValue = StateResource.Loading
         )
 
+    fun setSelectedImage(image: Image){
+        _selectedImage.value = image
+    }
 }
