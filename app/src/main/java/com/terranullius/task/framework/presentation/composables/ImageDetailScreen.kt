@@ -2,13 +2,12 @@ package com.terranullius.task.framework.presentation.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.CalendarViewMonth
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,9 +41,17 @@ fun ImageDetailScreen(
                 ErrorComposable()
             }
             else -> {
-                Scaffold() {
+                Scaffold(
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = { /*TODO*/ }) {
+                            Icon(imageVector = Icons.Default.Share, contentDescription = "share")
+                        }
+                    }, floatingActionButtonPosition = FabPosition.End
+                ) {
                     ImageDetailContent(
-                        modifier = Modifier.fillMaxSize().padding(it),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         image = selectedImage.value!!
                     )
                 }
@@ -80,12 +87,11 @@ fun ImageDetailContent(
         Spacer(modifier = Modifier.height(18.dp))
 
         Text(text = image.description, color = textColor)
-        
+
         Spacer(modifier = Modifier.height(36.dp))
-        
+
         Row(Modifier.align(Alignment.End)) {
-//            Image(painter = rememberVectorPainter(image = Icons.Default.CalendarToday), contentDescription = "")
-            Icon(Icons.Default.CalendarViewMonth, contentDescription = "", tint = textColor)
+            Icon(Icons.Default.CalendarViewDay, contentDescription = "", tint = textColor)
             Spacer(modifier = Modifier.width(3.dp))
             Text(text = image.publishedDate.substringBefore("T"), color = textColor)
         }
