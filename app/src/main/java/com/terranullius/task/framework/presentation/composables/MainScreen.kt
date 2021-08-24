@@ -1,5 +1,6 @@
 package com.terranullius.task.framework.presentation.composables
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,7 @@ import com.terranullius.task.framework.presentation.composables.theme.spaceBetwe
 import com.terranullius.task.framework.presentation.composables.theme.textColor
 import com.terranullius.task.framework.presentation.composables.util.ListType
 import com.terranullius.task.framework.presentation.util.Screen
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(
@@ -128,24 +131,38 @@ fun ImageList(
     LazyColumn(modifier = modifier) {
 
         when (listType) {
-            ListType.LINEAR -> itemsIndexed(images) { _: Int, item: Image ->
-                Column(Modifier.padding(vertical = spaceBetweenImages)) {
-                    ImageCard(
-                        image = item,
-                        modifier = Modifier.height(imageHeight.div(0.9f)),
-                        onClick = {
-                            onCardClick(it)
+            ListType.LINEAR -> itemsIndexed(images) { index: Int, item: Image ->
+
+                var translationXState by remember{
+                    mutableStateOf(if (index%2==0) -600f else 600f)
+                }
+
+                val translationXAnimState = animateFloatAsState(targetValue = translationXState)
+
+                LaunchedEffect(Unit){
+                    if (translationXState < 0f){
+                        while (translationXState<0f){
+                            translationXState = translationXState.plus(50f)
+                            delay(50L)
                         }
-                    ) { image ->
-                        Text(
-                            text = image.title,
-                            color = textColor,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .offset(x = 4.dp, y = (-4).dp)
-                        )
+                    } else{
+                        while (translationXState > 0f){
+                            translationXState = translationXState.minus(50f)
+                            delay(50L)
+                        }
                     }
-                    Spacer(modifier = Modifier.height(spaceBetweenImages))
+                }
+
+                ImageItem(
+                    modifier = Modifier
+                        .padding(vertical = spaceBetweenImages)
+                        .graphicsLayer {
+                            translationX = translationXAnimState.value
+                        },
+                    image = item,
+                    imageHeight = imageHeight
+                ){
+                    onCardClick(it)
                 }
             }
 
@@ -153,28 +170,42 @@ fun ImageList(
 
                 val chunkedList = images.chunked(2)
 
-                itemsIndexed(chunkedList) { _: Int, chunkedItem: List<Image> ->
+                itemsIndexed(chunkedList) { _ : Int, chunkedItem: List<Image> ->
 
                     Row(Modifier.fillMaxWidth()) {
-                        chunkedItem.forEach {
+                        chunkedItem.forEachIndexed{ index : Int, image: Image ->
 
-                            Column(Modifier.weight(1f).padding(spaceBetweenImages)) {
-                                ImageCard(
-                                    image = it,
-                                    modifier = Modifier.height(imageHeight),
-                                    onClick = {
-                                        onCardClick(it)
+                            var translationXState by remember{
+                                mutableStateOf(if (index%2==0) -600f else 600f)
+                            }
+
+                            val translationXAnimState = animateFloatAsState(targetValue = translationXState)
+
+                            LaunchedEffect(Unit){
+                                if (translationXState < 0f){
+                                    while (translationXState<0f){
+                                        translationXState = translationXState.plus(50f)
+                                        delay(50L)
                                     }
-                                ) { image ->
-                                    Text(
-                                        text = image.title,
-                                        color = textColor,
-                                        modifier = Modifier
-                                            .align(Alignment.BottomStart)
-                                            .offset(x = 4.dp, y = (-4).dp)
-                                    )
+                                } else{
+                                    while (translationXState > 0f){
+                                        translationXState = translationXState.minus(50f)
+                                        delay(50L)
+                                    }
                                 }
-                                Spacer(modifier = Modifier.height(spaceBetweenImages))
+                            }
+
+                            ImageItem(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(spaceBetweenImages)
+                                    .graphicsLayer {
+                                         translationX = translationXAnimState.value
+                                    },
+                                image = image,
+                                imageHeight = imageHeight
+                            ){
+                                onCardClick(it)
                             }
                         }
                     }
@@ -184,5 +215,34 @@ fun ImageList(
         }
 
 
+    }
+}
+
+@Composable
+private fun ImageItem(
+    modifier: Modifier = Modifier,
+    image: Image,
+    imageHeight: Dp,
+    onCardClick: (Image) -> Unit
+) {
+    Column(
+        modifier = modifier
+    ) {
+        ImageCard(
+            image = image,
+            modifier = Modifier.height(imageHeight),
+            onClick = {
+                onCardClick(it)
+            }
+        ) { image ->
+            Text(
+                text = image.title,
+                color = textColor,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .offset(x = 4.dp, y = (-4).dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(spaceBetweenImages))
     }
 }
