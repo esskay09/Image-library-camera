@@ -1,23 +1,18 @@
 package com.terranullius.task.framework.presentation.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.List
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
 import com.terranullius.task.business.domain.model.Image
 import com.terranullius.task.business.domain.state.StateResource
 import com.terranullius.task.framework.presentation.MainViewModel
@@ -26,6 +21,7 @@ import com.terranullius.task.framework.presentation.composables.components.Image
 import com.terranullius.task.framework.presentation.composables.components.LoadingComposable
 import com.terranullius.task.framework.presentation.composables.theme.spaceBetweenImages
 import com.terranullius.task.framework.presentation.composables.theme.textColor
+import com.terranullius.task.framework.presentation.composables.util.ListType
 import com.terranullius.task.framework.presentation.util.Screen
 
 @Composable
@@ -34,18 +30,36 @@ fun MainScreen(
     navController: NavHostController,
     viewModel: MainViewModel
 ) {
+
+    var listType by remember {
+        mutableStateOf(ListType.LINEAR)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-            ) {
-                Text(text = "Images")
-            }
+                title = {
+                    Text(text = "Images")
+                },
+                actions = {
+                    IconButton(onClick = {
+                        listType =
+                            if (listType == ListType.LINEAR) ListType.GRID else ListType.LINEAR
+                    }) {
+                        Icon(
+                            imageVector = if (listType == ListType.LINEAR) Icons.Default.List else Icons.Default.GridView,
+                            contentDescription = "list"
+                        )
+                    }
+                }
+            )
         }
-    ) { paddingValues->
+    ) { paddingValues ->
         val imageStateFlow = viewModel.imageStateFlow.collectAsState()
         MainScreenContent(
             modifier = modifier.padding(paddingValues),
-            imageStateFlow
+            imageStateFlow,
+            listType
         ) {
             setImageSelected(it, viewModel)
             navigateImageDetail(navController)
@@ -65,6 +79,7 @@ fun setImageSelected(image: Image, viewModel: MainViewModel) {
 fun MainScreenContent(
     modifier: Modifier = Modifier,
     imageStateFlow: State<StateResource<List<Image>>>,
+    listType: ListType,
     onCardClick: (Image) -> Unit
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -81,7 +96,8 @@ fun MainScreenContent(
 
                 ImageList(
                     modifier = Modifier.fillMaxSize(),
-                    images = imageList
+                    images = imageList,
+                    listType = listType
                 ) {
                     onCardClick(it)
                 }
@@ -90,41 +106,79 @@ fun MainScreenContent(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun ImageList(
     modifier: Modifier = Modifier,
     images: List<Image>,
-    onCardClick: (Image) -> Unit
+    listType: ListType,
+    onCardClick: (Image) -> Unit,
 ) {
 
-
     LazyColumn(modifier = modifier) {
-        itemsIndexed(images) { index: Int, item: Image ->
 
-            //TODO
-            /*val screenHeight = LocalConfiguration.current.screenHeightDp
-            val imageHeight = with(LocalDensity.current) {
-                screenHeight.div(3).toDp()
-            }*/
+        //TODO
+        /*val screenHeight = LocalConfiguration.current.screenHeightDp
+        val imageHeight = with(LocalDensity.current) {
+            screenHeight.div(3).toDp()
+        }*/
 
-            Column() {
-                ImageCard(
-                    image = item,
-                    modifier = Modifier.height(200.dp),
-                    onClick = {
-                        onCardClick(it)
+        when (listType) {
+            ListType.LINEAR -> itemsIndexed(images) { _: Int, item: Image ->
+                Column() {
+                    ImageCard(
+                        image = item,
+                        modifier = Modifier.height(200.dp),
+                        onClick = {
+                            onCardClick(it)
+                        }
+                    ) { image ->
+                        Text(
+                            text = image.title,
+                            color = textColor,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .offset(x = 4.dp, y = (-4).dp)
+                        )
                     }
-                ){ image->
-                    Text(
-                        text = image.title,
-                        color = textColor,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .offset(x = 4.dp, y = (-4).dp)
-                    )
+                    Spacer(modifier = Modifier.height(spaceBetweenImages))
                 }
-                Spacer(modifier = Modifier.height(spaceBetweenImages))
+            }
+
+            ListType.GRID -> {
+
+                val chunkedList = images.chunked(2)
+
+                itemsIndexed(chunkedList) { index: Int, chunkedItem: List<Image> ->
+
+                    Row(Modifier.fillMaxWidth()) {
+                        chunkedItem.forEach {
+
+                            Column(Modifier.weight(1f)) {
+                                ImageCard(
+                                    image = it,
+                                    modifier = Modifier.height(200.dp),
+                                    onClick = {
+                                        onCardClick(it)
+                                    }
+                                ) { image ->
+                                    Text(
+                                        text = image.title,
+                                        color = textColor,
+                                        modifier = Modifier
+                                            .align(Alignment.BottomStart)
+                                            .offset(x = 4.dp, y = (-4).dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(spaceBetweenImages))
+                            }
+                        }
+                    }
+                }
+
             }
         }
+
+
     }
 }
