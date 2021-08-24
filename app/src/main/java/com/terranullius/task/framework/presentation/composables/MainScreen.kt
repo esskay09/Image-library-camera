@@ -1,5 +1,6 @@
 package com.terranullius.task.framework.presentation.composables
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -41,7 +42,10 @@ fun MainScreen(
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    val imageHeight = screenHeight.div(3.3).dp
+    val imageHeight =
+        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight.div(
+            1.2
+        ).dp else screenHeight.div(3.3).dp
 
     var listType by rememberSaveable {
         mutableStateOf(ListType.LINEAR)
@@ -104,7 +108,7 @@ fun MainScreenContent(
             }
             is StateResource.Error -> {
                 val errorMsg = (imageStateFlow.value as StateResource.Error).message
-                ErrorComposable(msg = errorMsg)
+                ErrorComposable(msg = errorMsg.substringAfter("Reason:"))
             }
             is StateResource.Success -> {
                 val imageList = (imageStateFlow.value as StateResource.Success<List<Image>>).data
