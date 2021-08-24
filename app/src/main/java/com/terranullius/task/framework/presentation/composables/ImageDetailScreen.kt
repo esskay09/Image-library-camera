@@ -1,12 +1,19 @@
 package com.terranullius.task.framework.presentation.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.CalendarViewMonth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.terranullius.task.business.domain.model.Image
@@ -15,6 +22,9 @@ import com.terranullius.task.framework.presentation.composables.components.Error
 import com.terranullius.task.framework.presentation.composables.components.ImageCard
 import com.terranullius.task.framework.presentation.composables.theme.imageDetailHeight
 import com.terranullius.task.framework.presentation.composables.theme.textColor
+import com.terranullius.task.framework.presentation.composables.theme.textHeadlineColor
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun ImageDetailScreen(
@@ -32,10 +42,12 @@ fun ImageDetailScreen(
                 ErrorComposable()
             }
             else -> {
-                ImageDetailContent(
-                    modifier = Modifier.fillMaxSize(),
-                    image = selectedImage.value!!
-                )
+                Scaffold() {
+                    ImageDetailContent(
+                        modifier = Modifier.fillMaxSize().padding(it),
+                        image = selectedImage.value!!
+                    )
+                }
             }
         }
     }
@@ -53,16 +65,31 @@ fun ImageDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(imageDetailHeight)
-        ){
+        ) {
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
-        Text(text = image.title, style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold))
+
+        Text(
+            text = image.title,
+            style = MaterialTheme.typography.h5.copy(
+                fontWeight = FontWeight.Bold,
+                color = textHeadlineColor
+            )
+        )
         Spacer(modifier = Modifier.height(18.dp))
-        
+
         Text(text = image.description, color = textColor)
         
+        Spacer(modifier = Modifier.height(36.dp))
+        
+        Row(Modifier.align(Alignment.End)) {
+//            Image(painter = rememberVectorPainter(image = Icons.Default.CalendarToday), contentDescription = "")
+            Icon(Icons.Default.CalendarViewMonth, contentDescription = "", tint = textColor)
+            Spacer(modifier = Modifier.width(3.dp))
+            Text(text = image.publishedDate.substringBefore("T"), color = textColor)
+        }
+
     }
 
 }
