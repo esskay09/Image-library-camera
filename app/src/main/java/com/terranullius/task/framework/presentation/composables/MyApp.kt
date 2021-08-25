@@ -10,6 +10,11 @@ import com.terranullius.task.framework.presentation.MainViewModel
 import com.terranullius.task.framework.presentation.composables.theme.TaskTheme
 import com.terranullius.task.framework.presentation.composables.theme.mainPadding
 
+
+/**
+ * App theme and navigation applied to and accessible by all screens
+ * */
+
 @Composable
 fun MyApp(
     modifier: Modifier = Modifier.fillMaxSize().padding(horizontal = mainPadding),

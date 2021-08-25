@@ -30,6 +30,11 @@ fun ImageDetailScreen(
     viewModel: MainViewModel,
 ) {
 
+    /**
+     * Calculate Screen Height for Supporting all screen sizes
+     * */
+
+
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val imageHeight = screenHeight.div(2.4).dp
 
@@ -78,6 +83,11 @@ fun ImageDetailContent(
     image: Image,
     imageHeight: Dp,
 ) {
+
+    /**
+     *  Set Different layout depending on screen orientation
+     * */
+
     when (LocalConfiguration.current.orientation) {
         ORIENTATION_LANDSCAPE -> ImageDetailContentLandScape(modifier = modifier, image = image, imageHeight = imageHeight)
         ORIENTATION_PORTRAIT -> ImageDetailContentPotrait(modifier = modifier, image = image, imageHeight = imageHeight)

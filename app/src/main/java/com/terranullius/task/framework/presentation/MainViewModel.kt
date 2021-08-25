@@ -18,6 +18,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
+/**
+ * ViewModel for MainActivity and Composable Screens
+ * */
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val imageListInteractors: ImageListInteractors
@@ -48,6 +53,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * images from API and camera gets merged and exposed into UI as one StateFlow
+     * */
+
     private suspend fun combineImagesFromApiAndCamera() {
         combine(
             apiImageFlow,
@@ -65,6 +74,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
+
+    /**
+     * Handles all State Events
+     * */
 
     fun setStateEvent(stateEvent: StateEvent) {
         when (stateEvent) {
@@ -87,6 +100,10 @@ class MainViewModel @Inject constructor(
         _selectedImage.value = image
     }
 
+    /**
+     * Adds Bitmap obtained from MainActivity
+     * */
+
     fun addCapturedImage(bitmap: Bitmap) {
 
         val capturedImage = generateImage(bitmap)
@@ -94,6 +111,10 @@ class MainViewModel @Inject constructor(
         _capturedImagesStateFlow.value = _capturedImagesStateFlow.value + capturedImage
     }
 
+
+    /**
+     * Generates Image from the bitmap
+     * */
     private fun generateImage(bitmap: Bitmap) = Image(
         id = UUID.randomUUID().toString(),
         description = "Captured from camera",

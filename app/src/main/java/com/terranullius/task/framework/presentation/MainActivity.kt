@@ -31,6 +31,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        /**
+         * Collects all State Events and handles them
+         * */
         lifecycleScope.launchWhenCreated {
             viewModel.stateEventFlow.collect {
                 when (val stateEvent = it.getContentIfNotHandled()) {
@@ -51,6 +54,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun shareImage(url: String) {
+
+        /**
+         *  Share url safely, throws exception if no app found
+         * */
 
         try {
             val intent = Intent(Intent.ACTION_SEND).apply {
