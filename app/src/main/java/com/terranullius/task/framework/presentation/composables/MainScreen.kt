@@ -81,7 +81,7 @@ fun MainScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
-        val imageStateFlow = viewModel.imageStateFlow.collectAsState()
+        val imageStateFlow = viewModel.combinedImagesStateFlow.collectAsState()
         MainScreenContent(
             modifier = modifier.padding(paddingValues),
             imageStateFlow,

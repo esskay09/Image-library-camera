@@ -49,45 +49,57 @@ fun ImageCard(
         elevation = 5.dp
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+            val painter = if (image.imageBitmap == null) rememberImagePainter(
+                data = image.imageUrl,
+                builder = {
+                    this.memoryCacheKey(image.title)
+                    crossfade(true)
+                }) else null
 
-            val painter = rememberImagePainter(data = image.imageUrl, builder = {
-                this.memoryCacheKey(image.title)
-                crossfade(true)
-            })
+            painter?.let {
+                Image(
+                    painter = painter,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "image"
+                )
 
-            Image(
-                painter = painter,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = "image"
-            )
-
-            when (painter.state) {
-                is ImagePainter.State.Loading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                when (painter.state) {
+                    is ImagePainter.State.Loading -> {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                is ImagePainter.State.Success -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Black
-                                    ),
-                                    startY = 300f
+                    is ImagePainter.State.Success -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.Black
+                                        ),
+                                        startY = 300f
+                                    )
                                 )
-                            )
-                    )
-                }
-                is ImagePainter.State.Error -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Image(painterResource(id = R.drawable.ic_image_error), "image error")
+                        )
+                    }
+                    is ImagePainter.State.Error -> {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Image(painterResource(id = R.drawable.ic_image_error), "image error")
+                        }
+                    }
+                    else -> {
                     }
                 }
+            } ?: image.imageBitmap?.let {
+                Image(
+                    bitmap = it,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "image"
+                )
             }
 
 
