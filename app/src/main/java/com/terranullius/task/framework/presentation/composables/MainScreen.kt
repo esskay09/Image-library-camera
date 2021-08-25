@@ -2,7 +2,6 @@ package com.terranullius.task.framework.presentation.composables
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,6 +32,7 @@ import com.terranullius.task.framework.presentation.composables.theme.getTextCol
 import com.terranullius.task.framework.presentation.composables.theme.spaceBetweenImages
 import com.terranullius.task.framework.presentation.composables.util.ListType
 import com.terranullius.task.framework.presentation.util.Screen
+import com.terranullius.task.framework.presentation.util.StateEvent
 import kotlinx.coroutines.delay
 
 @Composable
@@ -74,7 +74,7 @@ fun MainScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                viewModel.onCaptureClick()
+                viewModel.setStateEvent(StateEvent.CaptureImage)
             }) {
                 Icon(imageVector = Icons.Default.Camera, contentDescription = "", tint = getTextColor())
             }
@@ -99,7 +99,7 @@ fun navigateImageDetail(navController: NavHostController) {
 }
 
 fun setImageSelected(image: Image, viewModel: MainViewModel) {
-    viewModel.setSelectedImage(image)
+    viewModel.setStateEvent(StateEvent.NavigateImageDetail(image))
 }
 
 @Composable

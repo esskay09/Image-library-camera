@@ -22,6 +22,7 @@ import com.terranullius.task.framework.presentation.MainViewModel
 import com.terranullius.task.framework.presentation.composables.components.ErrorComposable
 import com.terranullius.task.framework.presentation.composables.components.ImageCard
 import com.terranullius.task.framework.presentation.composables.theme.*
+import com.terranullius.task.framework.presentation.util.StateEvent
 
 @Composable
 fun ImageDetailScreen(
@@ -45,7 +46,7 @@ fun ImageDetailScreen(
                 Scaffold(
                     floatingActionButton = {
                         FloatingActionButton(onClick = {
-                            viewModel.onShare(selectedImage.value!!.imageUrl)
+                            viewModel.setStateEvent(StateEvent.ShareImage(selectedImage.value!!.imageUrl))
                         }) {
                             Icon(imageVector = Icons.Default.Share, contentDescription = "share")
                         }

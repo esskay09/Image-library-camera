@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.terranullius.task.framework.presentation.composables.MyApp
+import com.terranullius.task.framework.presentation.util.StateEvent
 import com.terranullius.task.framework.presentation.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -24,25 +25,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()){
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) {
             it?.let {
                 viewModel.addCapturedImage(it)
             }
         }
 
         lifecycleScope.launchWhenCreated {
-            launch {
-                viewModel.onShare.collect {
-                    it.getContentIfNotHandled()?.let {
-                        shareImage(it)
-                    }
-                }
-            }
-            launch {
-                viewModel.onCapture.collect {
-                    it.getContentIfNotHandled()?.let {
-                        takePicture()
-                    }
+            viewModel.stateEventFlow.collect {
+                when (val stateEvent = it.getContentIfNotHandled()) {
+                    is StateEvent.CaptureImage -> takePicture()
+                    is StateEvent.ShareImage -> shareImage(stateEvent.imgUrl)
+                    else -> Unit
                 }
             }
         }
@@ -64,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 putExtra(Intent.EXTRA_SUBJECT, "Sharing photo")
                 putExtra(Intent.EXTRA_TEXT, url)
             }
-            with(Intent.createChooser(intent, "Share photo")){
+            with(Intent.createChooser(intent, "Share photo")) {
                 startActivity(this)
             }
         } catch (e: Exception) {
